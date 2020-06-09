@@ -4,7 +4,7 @@ var express = require('express')
     mongo = require('mongodb')
     MongoClient = mongo.MongoClient
     ObjectId = require('mongodb').ObjectID
-    dbUrl = 'mongodb://mo1030_appTravel:Lemon2@mongo26.mydevil.net:27017/mo1030_appTravel'
+    dbUrl = 'mongodb://mo1030_appTravel:xxxxxxxx@xxxxxxxxxxx:27017/mo1030_appTravel'
     urlencodedParser = bodyParser.urlencoded({ extended: false });
 
     app.use(express.static(__dirname + '/public')) 
