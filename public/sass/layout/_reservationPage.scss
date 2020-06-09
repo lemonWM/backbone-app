@@ -1,0 +1,67 @@
+.list-item-reservation {
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    background:#fee7e7;
+    margin: 25px;
+    border-radius: 15px;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    -ms-border-radius: 15px;
+    -o-border-radius: 15px;
+    transition: all ease-in .3s;
+
+    p{
+        font-size: 17px;
+        margin: 5px 0px;
+
+        .btn-rounded {
+            transition: all ease-in .3s;
+            -webkit-transition: all ease-in .3s;
+            -moz-transition: all ease-in .3s;
+            -ms-transition: all ease-in .3s;
+            -o-transition: all ease-in .3s;
+        }
+
+        .btn-rounded:hover {
+            background-color: #ff6e6e;
+        }
+
+        .btn-rounded:hover  i {
+            color: white;
+        }
+    }
+}
+.list-item-reservation:hover .btn-rounded {
+    border: 1px solid #ff6e6e;
+}
+.list-item-reservation:hover i{
+    color: #ff6e6e;
+}
+
+// single details page
+
+.element-details-reservation{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+
+    .title, p{
+        font-size: 22px;
+        font-weight: 600;
+        margin: 5px;
+
+        span{
+            font-weight: 500;
+        }
+    }
+
+}
+
+@media screen and (max-width: 900px){
+
+    .list-item-reservation{
+        padding: 10px;
+        margin: 5px;
+    }
+}

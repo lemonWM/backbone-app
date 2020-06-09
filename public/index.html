@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Travelo</title>
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Droid+Sans:400,700">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!--(if target dev)><!-->
+    <link rel="stylesheet" href="css/style.css">
+    <!--<!(endif)-->
+    <!--(if target dist)>
+    <link rel="stylesheet" href="css/style.min.css">    
+    <!(endif)-->
+</head>
+<body>
+<div class="app-wrapper">
+    <div class="app-sidebar">
+        <div class="app-logo" width='80px'>
+            <a href="/">
+                <img src="images/logo.png" alt="" class="img-logo">
+            </a> 
+        </div>
+        <div class="app-sidebar-nav">
+            <a href="/places" class="active" pushstate-link data-tabs='places'>
+                <i class="fa fa-globe""></i>
+            </a>
+            <a href="/blog" pushstate-link data-tabs='opinions'>
+                <i class="fa fa-comments-o"></i>
+            </a>
+        </div>
+    </div>
+    <div class="app-main">
+        <div class="app-header" id="app-header"><!--widget statistic --></div>
+        <div class="app-main-tabs" id="places-tabs">
+            <a href="/places" class="active" pushstate-link>
+                <i class="fa fa-compass"></i>
+                Places
+            </a>
+            <a href="/reservations" pushstate-link>
+                <i class="fa fa-check-square-o "></i>
+                Reservations
+            </a>
+            <a href="/users" pushstate-link>
+                <i class="fa fa-users"></i>
+                Users
+            </a>
+        </div>
+        <div class="app-main-tabs" id="blog-tabs">
+            <a href="/opinions" pushstate-link>
+                <i class="fa fa-comments-o"></i>
+                Opinions
+            </a>
+            <a href="/blog" pushstate-link>
+                <i class="fa fa-file-text-o"></i>
+                Blog
+            </a>
+        </div>
+        <div class="app-content-wrapper">
+            <div class="app-content" id="app-content"></div> <!-- main app render place -->
+            <div class="app-content-sidebar" id="app-content-sidebar"></div> <!-- last reservation widget content -->
+        </div>
+    </div>
+</div><!-- /.app-wrapper -->
+
+
+<!-- Templates-->
+
+
+<script id="actionPanelTemplate" type="text/template">
+    <div class="app-search">
+        <input type="text" placeholder='Search by <%= searchBy %>'>
+    </div>
+    <div class='app-search-title'>
+        <span><p><%= title %></p></span>
+    </div>
+    <% if(collectionName !== 'places'){ %>
+        <div class="app-addNew" >
+            <p>Add new <%= elementName %>
+                <span class="btn-rounded active add">
+                    <i class="fa fa-check"></i>
+                </span>
+            </p>     
+        </div> 
+    <% } %>   
+</script> <!-- template for action, sort & add new element-->
+
+<!--template for statistic in app-header-->
+<script id="statisticWidgetTemplate" type="text/template">
+    <span>Destinations: 
+        <p><%= places %> </p>
+    </span>
+    <span>Actual reservations:
+        <p><%= reservations %> </p> 
+    </span>
+    <span>Users: 
+        <p><%= users %> </p>
+    </span>
+</script> 
+
+
+<script id="placeItemTemplate" type="text/template">
+    <div class='element-top-text'>   
+        <span><p><%= localization %>,</p></span>
+        <span><p><%= address %> </p></span>
+    </div>
+    <div class='element-bottom-text'>
+        <span> <i class="fa fa-calendar"></i><p><%=holidayTime%></p></span>
+        <span> <i class="fa fa-dollar"></i><p><%=price%></p></span>
+    </div>
+    <img src="/images/<%=logo %>.jpg" alt="" clas='single-place-logo'>
+    <button id='btn-details' type="button" class="btn btn-default btn-show-details">Details</button>
+</script> <!--template for single place view-->
+
+<script id="placeDetailsTemplate" type="text/template">
+    <p>Localization: 
+        <span><%= localization %></span>
+    </p>
+    <p>Where is it? 
+        <span> <%= address %> </span>
+    </p>
+    <p>Type of travell: 
+        <span> <%= type %> </span>
+    </p>
+    <div class='attraction-wrapper'>
+        <p>  Attractions and plases You can see: </p>
+            <% for(let i=0; i< attraction.length; i++){ %>
+                 <li> <%= attraction[i] %> </li>
+            <% } %>
+    </div>
+    <p>Fly from: 
+        <span> <%= flyFrom %></span>
+    </p>
+    <p>Duration of the tour: 
+        <span><%= holidayTime %></span>
+    </p>
+    <p>Price: 
+        <span><%= price %></span>
+    </p>
+    <div class='image-wrapper'>
+        <p>Local views: 
+        </p>
+        <div class='image-gallery'>
+            <% for(let i=0; i< pictures.length; i++){ %>
+                <img src="/images/<%= pictures[i] %>.jpg" alt="" class='image-item responsive'>
+            <% } %>
+        </div>
+    </div>
+    <button id='bookAPlace' type="button" class="btn btn-default">Go to reservation</button>
+</script> <!-- template for place details view-->
+
+
+
+<script id="userItemTemplate" type="text/template">
+    <p>
+        <i class="fa fa-user"></i>
+        <span>
+            <%= first_name +' '+ last_name %> 
+        </span>
+    </p>   
+    <span id="btn-details" class="btn-rounded ">
+        <i class="fa fa-search"></i>
+    </span>
+</script>
+
+<script id="userDetailsTemplate" type="text/template">
+    <h2 class="title">User information:</h2>
+    <p>User login: <span><%= login %></span></p>
+    <p>First Name: <span><%= first_name %></span></p>
+    <p>Last Name: <span><%= last_name %></span></p>
+    <p>Birthdate: <span><%= birthdate %></span></p>
+    <p>Address: <span><%= address %></span></p>
+    <p>Zip Code: <span><%= zip_code %></span></p>
+    <p>City: <span><%= city %></span></p>
+</script>
+
+<script id="userNewTemplate" type='text/template'>
+    <h3 class="app-heading"><i class="fa fa-plus"></i> Register new user</h3>
+    <div class="app-form">
+        <form action="" id="new-user">
+            <div class="app-form-field">
+                <label for="first_name">Your name</label>
+                <input type="text" id="first_name">
+            </div>
+            <div class="app-form-field">
+                <label for="last_name">Your last name</label>
+                <input type="text" id="last_name">
+            </div>
+            <div class="app-form-field">
+                <label for="birthdate">Select birthday</label>
+                <input type="date" id="birthdate" class='calendar'>
+            </div>
+            <div class="app-form-field">
+                <label for="address">Address</label>
+                <input type="text" id="address">
+            </div>
+            <div class="app-form-field">
+                <label for="zip_code">Zip Code</label>
+                <input type="text" id="zip_code">
+            </div>
+            <div class="app-form-field">
+                <label for="city">Place</label>
+                <input type="text" id="city">
+            </div>
+            <div class="app-form-field">
+                <label for="login">Your login</label>
+                <input type="text" id="login">
+            </div>
+            <div class="app-form-field">
+                <label for="password">Set you password</label>
+                <input type="text" id="password">
+            </div>
+
+            <div class="app-form-submit">
+                <button type="submit" class="btn">Save</button>
+                <% if(!this.model.isNew()){ %>
+                <button type="button" class="btn delete">Remove User</button>    
+                <% } %>
+            </div>
+        </form>
+    </div>
+</script>
+<!-- template for new user-->
+
+
+<script id="reservationItemTemplate" type="text/template">
+    <p><span> <%= user %> </span></p>
+    <p><span> <%= destination %> </span></p>
+    <p>
+        Show details: 
+        <span id="btn-details" class="btn-rounded ">
+            <i class="fa fa-search"></i>
+        </span>
+    </p>
+</script>
+
+<script id="reservationDetailsTemplate" type="text/template">
+    <h2 class='title'>Reservation information:</h2>
+    <p>User name: <span><%= user %></span></p>
+    <p>Destination:  <span><%= destination %></span></p>
+    <p>Trip start at: <span><%= dateFrom %></span></p>
+    <p>Back at: <span><%= dateTo %></span></p>
+</script>
+
+<script id="reservationNewTemplate" type='text/template'>
+    <h3 class="app-heading"><i class="fa fa-plus"></i> Register new reservation</h3>
+    <div class="app-form">
+        <form action="" id="new-user">
+            <div class="app-form-field">
+                <label for="user">Your first and last name</label>
+                <input type="text" id="user">
+            </div>
+            <div class="app-form-field">
+                <label for="comment-author">Your password</label>
+                <div class='password-area'>
+                    <input type="password" id="user-password" class='password-input' placeholder='Set min 5 characters'>
+                    <i class="fa fa-check-circle transparent" id='password-check'></i>
+                </div>
+            </div>
+            <div class="app-form-field">
+                <label for="destination">Set destination</label>
+                <input type="text" id="destination">
+            </div>
+            <div class="app-form-field">
+                <label for="dateFrom">Select travel date from / to </label>
+                <input type="date" id="dateFrom" class='calendar' placeholder='start at date dd-mm-yyyy'>
+                <input type="date" id="dateTo" class='calendar'>
+            </div>
+
+            <div class="app-form-submit">
+                <button type="submit" class="btn" id='sendBtn' disabled>Save</button>
+                <% if(!this.model.isNew()){ %>
+                <button type="button" class="btn delete">Remove User</button>    
+                <% } %>
+            </div>
+        </form>
+    </div>
+</script>
+
+<script id="reservationsLastSidebarTemplate" type="text/template">
+    <button id='closeSidebar' class="closeSidebar"><i class="fa fa-times"></i></button>
+    <h2 class='last-title'>Last Reservations</h2>
+    <% for(let i = 0; i < reservationList.length; i++ ) {%>
+        <% if (i === 5) { break; } %>
+        <div class='last-element'>
+            <span>
+                <p>
+                    <i class="fa fa-user"></i>
+                    <%= reservationList[i].user%> 
+                </p>
+            </span>
+            <span>
+                <p>
+                    <i class="fa fa-map-marker"></i>
+                    <%= ' to: '+ reservationList[i].destination %>
+                </p>
+            </span>
+            <span>
+                <p>
+                    <i class="fa fa-suitcase"></i>
+                    <%='From: '+ reservationList[i].dateFrom + ' to: '+  reservationList[i].dateTo%>
+                </p>
+            </span>
+        </div>     
+    <% } %>
+    <div class='sidebar-bottom'>
+        <span>Do You have a travel plan ?</span>
+        <button type="button" class="btn reservation-button" id='goToReservation'>Book</button>  
+    </div>
+</script> 
+<!--template for reservation sidebar reservation-->
+
+
+<script id="opinionItemTemplate" type="text/template">
+    <p>User: <span><%= user %> </span></p>
+    <p>About place: <span><%= aboutDestination %></span></p>
+    <p>Date: <span><%= data %></span></p>
+    <button id='btn-details' type="button" class="btn btn-default">Details</button>
+</script> 
+<!-- template for opinion li element-->
+<script id="opinionDetailsTemplate" type="text/template">
+    <div class="element-header">
+        <p>User: <span><%= user %> </span></p>
+        <p>About destination: <span> <%= aboutDestination %> </span></p>
+        <p>Data: <span><%= data %></span></p>
+    </div>
+    <div class='element-main'>
+        <ul>Ratings: 
+            <li>Trip ogranization: <%= raiting.organization %>/10 </li>
+            <li>Local Attraction: <%= raiting.attractions %>/10 </li>
+            <li>Hotel: <%= raiting.hotel %>/10 </li>
+        </ul>
+        <p class='comment'>Comment:<span> <%= comment %> </span></p>
+    </div>
+</script> 
+
+<script id="opinionNewTemplate" type="text/template">
+    <h3 class="app-heading"><i class="fa fa-plus"></i> Add new opinion</h3>
+    <div class="app-form">
+        <form action="" id="new-user">
+            <div class="app-form-field">
+                <label for="user">Your first and last name</label>
+                <input type="text" id="user">
+            </div>
+            <div class="app-form-field">
+                <label for="comment-author">Your password</label>
+                <div class='password-area'>
+                    <input type="password" id="user-password" class='password-input' placeholder='Set min 5 characters'>
+                    <i class="fa fa-check-circle transparent" id='password-check'></i>
+                </div>
+            </div>
+            <div class="app-form-field">
+                <label for="destination">Set destination</label>
+                <input type="text" id="aboutDestination">
+            </div>
+            <div class="app-form-field">
+                <p><span>Rate using values</span></p>
+                <div class='select-element'>
+                    <label for="organization">Orgaznization trip <span>(from 1-10)</span></label>
+                    <input type="number" id='organization' min='1' max='10' class='rate'>
+                </div>
+                <div class='select-element'>
+                    <label for="attraction">Local attraction <span>(from 1-10)</span></label>
+                    <input type="number" id='attractions' min='1' max='10'class='rate'>
+                </div>
+                <div class='select-element'>
+                    <label for="hotel">Hotel <span>(from 1-10)</span></label>
+                    <input type="number" id='hotel' min='1' max='10'class='rate'>
+                </div>
+            </div>
+            <div class='app-form-field'>
+                <textarea type="text" id="opinion" placeholder='Leave opinion'></textarea>
+            </div>
+            <div class="app-form-submit">
+                <button type="submit" class="btn" id='sendBtn' disabled>Save</button>
+                <% if(!this.model.isNew()){ %>
+                <button type="button" class="btn delete">Remove Comment</button>    
+                <% } %>
+            </div>
+        </form>
+    </div>
+</script>
+
+
+<script id="blogItemTemplate" type="text/template">
+    <div class='img-content'>
+        <img src="<%= logo %>" alt="defaultPic.jpg" class='responsive'>
+    </div>
+    <div class='post-text-content'>
+        <div class='title'>
+            <h2><%= title %></h2>
+        </div>
+        <div class='date-autor'>
+            <p><span> <%= data %> </span>|</p>
+            <p class='author'>Author: <span><%= user %> </span></p>
+        </div>
+        <div class='subtitle'>
+            <h3> <%= subtitle %> </h3>
+        </div>
+        <div class='comments'>
+            <p>Comments: <span><%= comments.length-1 %> </span></p>
+        </div>
+        <button id='btn-details' type="button" class="btn btn-default">Read more</button>
+    </div>    
+</script>
+<!-- template for blog li element-->
+
+<script id="blogDetailsTemplate" type="text/template">
+    <div class= 'element-header'>
+        <div class="post-img">
+            <img src="<%= logo %>" alt="" class='responsive'>
+        </div>
+        <div class='post-title'>
+            <h2 class='title'> <%= title %> </h2>
+        </div>
+        <div class='post-author-date'>
+            <p><span> <%= data %> </span>|</p>
+            <p>Author<span> <%= user %> </span></p>
+        </div>
+        <div class='separator'></div>
+    </div>
+    <div class='element-main'>
+        <h3 class='post-subtitle'> <%= subtitle %> </h3>
+            <% for(i=0; i < articles.length; i++){ %>
+                <p class='post-text'><%= articles[i] %></p>
+            <% } %>
+        <div class='post-img-gallery'>
+            <% for(i=0; i < pictures.length; i++){ %>
+                <img src="<%= pictures[i] %>" alt="defaultPic.jpg">
+            <% } %>
+        </div>
+    </div>
+    <div class='element-main comment'>
+        <h4 class='post-comment-title'> Comments and opinions</h4>
+        <% for(i=0; i < comments.length; i++) { %>
+            <% if(i > 0){ %>
+                <div class='post-comment-item'>
+                    <div class='user-logo'> 
+                        <span class="btn-rounded" >
+                            <i class="fa fa-user"></i>
+                        </span>
+                    </div>
+                    <div>
+                        <div class='comment-top-line'>     
+                            <p class='author'><span> <%= comments[i].author %></span></p>
+                            <p class='date'>Date: <span> <%= comments[i].data %> </span></p>        
+                        </div>
+                        <div class='comment-bottom-line'>
+                            <p><%= comments[i].text %> </p>
+                        </div>
+                    </div> 
+                </div>
+            <% } %> 
+        <% } %>
+    </div>
+    <form action="" id="new-comment" class='comment-form'>
+        <h3 class='article-comment-title'> Leave comment</h3>
+        <div class="app-form-field">
+            <label for="comment-author">User</label>
+            <input type="text" id="comment-author">
+        </div>
+        <div class="app-form-field" id='password-area'>
+            <label for="comment-author">Password</label>
+            <div class='password-area'>
+                <input type="password" id="author-password" class='password-input' placeholder='Set min 5 characters'>
+                <i class="fa fa-check-circle transparent" id='password-check'></i>
+            </div>
+        </div>
+        <div class="app-form-field">
+            <label for="comment-text">Leave a reply</label>
+            <textarea type="text" id="comment-text" class='comment-text-area ' placeholder='Type text' ></textarea>
+        </div>
+        <div class="app-form-submit">
+            <button type="submit" id='sendComment' class="btn sendComment" disabled>Post</button>
+        </div>
+    </form>
+</script>
+
+
+<script id="blogNewTemplate" type='text/template'>
+    <h3 class="app-heading"><i class="fa fa-plus"></i> Create new blog post</h3>
+    <div class="app-form">
+        <form action="" id="new-user">
+            <div class="app-form-field">
+                <label for="user">Set name</label>
+                <input type="text" id="user">
+            </div>
+            <div class="app-form-field">
+                <label for="comment-author">Your password</label>
+                <div class='password-area'>
+                    <input type="password" id="user-password" class='password-input' placeholder='Set min 5 characters'>
+                    <i class="fa fa-check-circle transparent" id='password-check'></i>
+                </div>
+            </div>
+            <div class="app-form-field">
+                <label for="title">Main title</label>
+                <input type="text" id="title" placeholder='Sign content'>
+            </div>
+            <div class="app-form-field">
+                <label for="subtitle">Subtitle</label>
+                <input type="text" id="subtitle" placeholder='Sign content'>
+            </div>
+            <div id='articles-elements'>
+                <div class="app-form-field" >
+                    <label for="articles">Texts creator</label>
+                    <div id='articles-container' class='articles-container'>
+                        <textarea type="text" id="articles" placeholder='Write acapit'></textarea>
+                    </div>
+                    <p>Add next acapit
+                        <span id="createNewTextLine" class="btn-rounded">
+                            <i class="fa fa-plus"></i>
+                        </span>
+                    </p>
+                </div>
+                <button id='confirmText' type='button' class='btn btn-success'>Confirm texts</button>
+            </div>
+            <div class="app-form-field">
+                <label for="logo">Post logo url</label>
+                <input type="text" id="logo" placeholder='Sign url/address'>
+            </div>
+            <div id='pictures-elements'>
+                <div class="app-form-field">
+                    <label for="image">Images creator</label>
+                    <div id='images-container' class='images-container'>
+                        <input type="text" id="image" placeholder='Sign url/address'>   
+                    </div>
+                    <p>Add next image
+                        <span id="createNewImgLine" class="btn-rounded">
+                            <i class="fa fa-plus"></i>
+                        </span>
+                    </p>
+                </div>
+                <button id='confirmImages' type='button' class='btn btn-success'>Confirm photos</button>
+            </div>
+            <div class="app-form-submit">
+                <button type="submit" class="btn" id='sendBtn' disbled>Save</button>
+            </div>
+        </form>
+    </div>
+</script>
+
+
+<!--libs, templates, roters-->
+
+<!--(if target !dist)><!-->
+
+<script src="js/libs/jquery.js"></script>
+<script src="js/libs/underscore.js"></script>
+<script src="js/libs/backbone.js"></script>
+<script src="js/libs/pushstate-links.js"></script> 
+<script src="js/libs/backbone.stickit.js"></script>
+<script src="js/libs/magicsuggest.js"></script>
+
+<!--end of libs-->
+<script src="js/Setup.js"></script>
+<script src="js/views/StatisticView.js"></script>
+<script src="js/views/NavBar.js"></script>
+<script src="js/views/ActionPanelView.js"></script>
+<script src="js/views/sidebarReservationTempalete.js"></script>
+
+<!--places-->
+<script src="js/models/PlaceModel.js"></script>
+<script src="js/collections/PlacesListCollection.js"></script>
+<script src="js/views/PlaceListItemView.js"></script>
+<script src="js/views/PlacesListView.js"></script>
+<script src="js/views/PlaceDetailsView.js"></script>
+<!--end of /places model views collection-->
+
+<!--users-->
+<script src="js/models/UserModel.js"></script>
+<script src="js/collections/UserListCollection.js"></script>
+<script src="js/views/UserListItemView.js"></script>
+<script src="js/views/UserListView.js"></script>
+<script src="js/views/UserDetailsView.js"></script>
+<script src="js/views/UserNewView.js"></script>
+<!-- end of /users model views collections-->
+
+<!--reservations-->
+<script src="js/models/ReservationModel.js"></script>
+<script src="js/collections/ReservationListCollection.js"></script>
+<script src="js/views/ReservationListItemView.js"></script>
+<script src="js/views/ReservationsListView.js"></script>
+<script src="js/views/ReservationDetailView.js"></script>
+<script src="js/views/ReservationNewTemplate.js"></script>
+<!-- end of /reservation model views collections-->
+
+<!--opinions-->
+<script src="js/models/OpinionModel.js"></script>
+<script src="js/collections/OpinionsListCollection.js"></script>
+<script src="js/views/OpinionListItemView.js"></script>
+<script src="js/views/OpinionListView.js"></script>
+<script src="js/views/OpinionDetailsView.js"></script>
+<script src="js/views/OpinionNewView.js"></script>
+<!-- end of /opinions model views collections-->
+
+<!--blog-->
+<script src="js/models/BlogModel.js"></script>
+<script src="js/collections/BlogListCollection.js"></script>
+<script src="js/views/BlogListItemView.js"></script>
+<script src="js/views/BlogListView.js"></script>
+<script src="js/views/BlogDetailsView.js"></script>
+<script src="js/views/BlogNewView.js"></script>
+
+
+<script src="js/Routers/Router.js"></script>
+<!--<!(endif)-->
+<!--(if target dist)>
+    <script src='js/libs.min.js'></script>
+    <script src='js/app.min.js'></script>
+<!(endif)-->
+
+<script> 
+    APP.init()
+</script>
+
+</body>
+</html>

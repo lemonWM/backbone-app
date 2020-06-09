@@ -1,0 +1,80 @@
+// *--------- BUTTONS ---------*
+%button {
+    display: inline-block;
+    height: 60px;
+    padding: 0 60px;
+    border-radius: 5px;
+    border: none;
+    background: $generalSpecialColor;
+
+    position: relative;
+
+    cursor: pointer;
+
+    font: 18px/60px $droidsans;
+    color: $generalSpecialTextColor;
+
+    &.special {
+        background-color: desaturate($generalSpecialColor, 100%);
+
+        cursor: not-allowed;
+    }
+}
+
+%button-rounded {
+    display: inline-block;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 1px $generalBorderColor solid;
+
+    cursor: pointer;
+
+    font-size: 12px;
+    line-height: 34px;
+    text-align: center;
+    color: lighten($generalTextColor, 30%);
+
+    @extend %transitionAll;
+
+    &:hover,
+    &.active {
+        border-color: #fdf2f2;
+        background-color: #fdf2f2;
+
+        color: $generalSpecialTextColor;
+    }
+}
+
+// *--------- STYLES ---------*
+.btn {
+    @extend %button;
+}
+
+.btn-show-details{
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    border-radius: 0px;
+    height: 50px;
+    padding: 0px;
+    opacity: 0.9;
+    font-size: 15px;
+    line-height: 1px;
+    background-color: #ff6e6e;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    transition: all ease-in .3s;
+    -webkit-transition: all ease-in .3s;
+    -moz-transition: all ease-in .3s;
+    -ms-transition: all ease-in .3s;
+    -o-transition: all ease-in .3s;
+}
+
+.btn-show-details:hover{
+        opacity: 1;
+}
+
+.btn-rounded {
+    @extend %button-rounded;
+}

@@ -1,0 +1,32 @@
+
+%clearfix {
+    @include clearfix;
+}
+
+%transitionColor {
+    @include transition($props: color);
+}
+
+%transitionAll {
+    @include transition;
+}
+
+
+body {
+    background-color: #fff7f8;
+    min-height: 100vh;
+    display: flex;
+}
+
+.app-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: #fdf2f2;
+}
+
+@media screen and (max-width: 900px) {
+    .app-wrapper{
+        flex-direction: column;
+    }
+}

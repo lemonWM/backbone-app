@@ -1,0 +1,281 @@
+// *--------- TABS ---------*
+.app-main{
+    margin-left: 100px;
+}
+.app-main-tabs {
+    display: none; // jQuery
+    background-color: #fdf2f2;
+    font-size: 0;
+    line-height: 0;
+
+    &.active {
+        display: flex;
+        flex-direction: row;
+        padding-left: 45px;
+    }
+
+    a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 120px;
+        margin-right: 20px;
+        padding: 10px 30px;
+        background-color: #fdf2f2;
+        font-size: 16px;
+        line-height: 40px;
+        color: $generalTextColor;
+        border-radius: 15px;
+        text-decoration: none;
+
+        .fa {
+            color: #ff6e6e;
+            opacity: 0.8;
+            font-size: 40px;
+        }
+        // ACTIVE
+        &.active {
+            background-color: #fee7e7;
+
+            &:after {
+                content: "";
+                width: 100px;
+                height: 1px;
+                background-color: #fee7e7;
+                position: absolute;
+                bottom: -1px;
+                left: 0;
+            }
+        }
+    }
+}
+
+// *--------- CONTENT ---------*
+.app-content-wrapper {
+    display: flex;
+    flex-direction: row;
+    padding: 30px 0px 30px 30px;
+
+    @extend %clearfix;
+
+    .hide{
+        display: none;
+    }
+
+    .app-content-sidebar {
+        margin-left: auto;
+        min-width: 300px;
+        background-color: white;
+        -webkit-border-top-left-radius: 20px;
+        -webkit-border-bottom-left-radius: 20px;
+        -moz-border-radius-topleft: 20px;
+        -moz-border-radius-bottomleft: 20px;
+        border-top-left-radius: 20px;
+        border-bottom-left-radius: 20px;
+
+        .sidebar-reservation-last{
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+            padding-bottom: 200px;
+           
+            .closeSidebar{
+                background:transparent;
+                border: none;
+                padding: 25px;
+                align-self: flex-end;
+            }
+
+            .last-title{
+                font-size: 25px;
+                margin: 25px 10px;                
+            }
+            .last-element{
+                padding: 20px;
+
+                span{
+                    font-size: 18px;
+
+                    i{
+                        color:#ff6e6e;
+                        margin-right: 5px;
+                    }
+                    p{
+                        margin: 5px 0px
+                    }
+                }
+            }
+            .sidebar-bottom {
+                position: absolute;
+                bottom: 50px;               
+                display: flex;              
+                flex-direction: column;                        
+                width: 100%;            
+                align-items: center;
+                
+                span{
+                    color:#ff6e6e;
+                    margin: 20px 10px;
+                    font-size: 17px;           
+                }
+                .reservation-button{
+                    height: 50px;
+                    line-height: 1px;                
+                    background-color:#ff6e6e;
+                    width: 200px;
+                    border-radius: 35px;                    
+                }
+            }
+        }
+    }
+    .app-content {
+        display: flex;
+        flex-direction: column;
+
+        .action-element{
+            margin: 0px ;
+            margin-left: 15px;
+            display: flex;
+            flex-direction: column;
+
+            .app-search{
+
+                input{
+                    background:white;                
+                    padding: 26px;               
+                    height: 40px;              
+                    border-radius: 10px;               
+                    min-width: 236px;               
+                    width: 400px;              
+                    margin-bottom: 15px;               
+                    line-height: 1px;
+                }
+            }
+            .app-search-title {
+
+                span{
+                    p{
+                        font-size: 25px;
+                        margin: 15px 0px;
+                        
+                    }
+                }
+            }
+
+            .app-addNew {
+
+                p{
+                    font-size: 22px;
+                    margin-bottom: 10px;
+
+                    span{
+                        border:2px solid #ff6e6e;
+                        transition: all ease-in .3s;
+                        -webkit-transition: all ease-in .3s;
+                        -moz-transition: all ease-in .3s;
+                        -ms-transition: all ease-in .3s;
+                        -o-transition: all ease-in .3s;
+
+                        i { 
+                            color:#ff6e6e;
+                            font-size: 16px;
+                        }
+                    }
+
+                    span:hover{
+                        background-color: #ff6e6e;
+                    }
+
+                    span:hover i {
+                        color: white;
+                    }
+                }
+            }
+        }
+
+        .app-items-list {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+        .blog-list{
+            flex-direction: column;
+        }
+    }
+
+    .app-actions {
+        padding: 30px;
+        border-bottom: 1px lighten($generalBorderColor, 10%) solid;
+
+        position: relative;
+
+        @extend %clearfix;
+
+        .add {
+            float: right;
+        }
+    }
+
+        .app-search {
+            width: 40%;
+            float: left;
+
+            input[type='text'] {
+                width: 100%;
+                height: 35px;
+                border: none;
+                background: none;
+
+                font-family: $droidsans;
+                font-size: 18px;
+                color: lighten($generalTextColor, 45%);
+            }
+
+            @include placeholder {
+                color: lighten($generalTextColor, 45%);
+            }
+        }
+}
+
+
+@media screen and (max-width: 900px){
+
+    .app-main{
+        margin: 0px;
+
+        .app-main-tabs {
+            padding: 10px 15px;
+            margin-top: 75px;
+
+            a{
+                width: 80px;
+                line-height: 21px;
+                font-size: 12px;
+
+            }
+        }
+
+        .app-content-wrapper{
+            padding: 15px 0px; 
+            flex-direction: column;
+
+            .app-content-sidebar{
+
+                display: none;
+            }
+
+            .app-content .place{
+
+                justify-content: center;
+            }
+
+            .app-content .action-element .app-search input {
+
+                min-width: auto;
+                width: 100%;
+                max-width: 400px;
+            }
+        }
+    }    
+}

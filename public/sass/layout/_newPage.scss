@@ -1,0 +1,206 @@
+.element-new {
+   
+    .app-form-field{
+        display: flex;
+        flex-direction: column;
+        margin: 20px 0px;
+
+        .password-area{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            position: relative;
+            width: 300px;
+            height: 45px;
+
+            input{
+                height: 45px;
+                padding-left: 20px;
+            }
+
+            .transparent{
+                color: transparent;
+                margin-left: 10px;
+                font-size: 21px;
+                position: absolute;
+                right: 10px;
+            }
+            .active{
+                color:#ff6e6e ;
+            }
+        }
+
+        label{
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        input{
+            font-size: 16px;
+            width: 300px;
+            box-shadow: none;
+            border: none;
+        }
+
+        .calendar{
+            height: 45px;
+            width: 300px;
+            color:#4b4b4b;
+            margin-bottom: 15px;
+            padding: 0px 20px;
+        }
+
+        .select-element{
+            margin: 8px;
+
+            .rate{
+                width: 50px;
+            }
+        }
+
+        textarea{
+            width: 300px;
+            border: none;
+            box-shadow: none;
+        }
+        .form-control{
+            width: 300px;
+            padding: 0px;
+            border: none;
+
+            .ms-sel-ctn{
+                display: flex;
+                flex-direction: column;    
+                width: 300px;                   
+                position: relative;                   
+                height: 45px;
+
+                .ms-sel-item {
+                    position: absolute;
+                    top: 0px;
+                    z-index: 99;
+                    height: 35px;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    border: none;
+                    background:  #fee7e7;
+                    border-radius:7px;
+                    -webkit-border-radius:7px;
+                    -moz-border-radius:7px;
+                    -ms-border-radius:7px;
+                    -o-border-radius:7px;
+                    margin-left: 10px;
+                    margin-top: 5px;
+                    padding: 10px;
+                    
+                    .ms-close-btn{
+                        margin: 0px;
+                        margin-left: 0px;
+                        margin-left: 10px;
+                    }
+                }
+
+                input{
+                    border: none;
+                    box-shadow: none;
+                    font-size: 15px;
+                }
+            }
+        }
+
+        .articles-container {
+            
+            display: flex;
+            flex-direction: column;
+
+            textarea{
+                width: 300px;
+                border: none;
+                box-shadow: none;
+                font-size: 16px;
+                margin-bottom: 15px;
+            }
+        }
+        p{
+            font-size: 16px;
+
+            .btn-rounded{
+                border: 1px solid #ff6e6e;
+                transition: all ease-in .2s;
+                -webkit-transition: all ease-in .2s;
+                -moz-transition: all ease-in .2s;
+                -ms-transition: all ease-in .2s;
+                -o-transition: all ease-in .2s;
+
+                i{
+                    color: #ff6e6e;
+                    font-size: 14px;
+                }
+            }
+            .btn-rounded:hover{
+
+                background-color: #ff6e6e;
+            }
+            .btn-rounded:hover i{
+
+                color: white;
+            }
+
+        }
+
+    }
+    .btn{
+        height: 50px;
+        line-height: 1px;
+        background:#fee7e7;
+        color:#4b4b4b;
+        border:1px solid #ff6e6e;
+        border-radius: 35px;
+        margin-left: 30px;
+        transition: all ease-in .2s;
+        -webkit-transition: all ease-in .2s;
+        -moz-transition: all ease-in .2s;
+        -ms-transition: all ease-in .2s;
+        -o-transition: all ease-in .2s;
+        -webkit-border-radius: 35px;
+        -moz-border-radius: 35px;
+        -ms-border-radius: 35px;
+        -o-border-radius: 35px;
+    }
+    .btn:hover{
+        color: white;
+        background-color:#ff6e6e ;
+    }
+
+    .images-container{
+        display: flex;
+        flex-direction: column;
+
+        input{
+            margin-bottom: 15px;
+        }
+    }
+
+    .app-form-submit {
+        display: flex;
+        border: none;
+
+        .btn{
+            height: 50px;
+            line-height: 1px;
+            background-color:#ff6e6e;
+            width: 200px;
+            border-radius: 35px;
+            color:white;
+            margin: 0px;
+        }
+    }
+}
+
+@media screen and (max-width: 400px){
+
+    .element-new .app-form-field .form-control .ms-sel-ctn, .element-new .app-form-field .form-control, .element-new .app-form-field input, .element-new .app-form-field .calendar, .element-new .app-form-field .articles-container textarea{
+        width: 250px;
+    }
+}

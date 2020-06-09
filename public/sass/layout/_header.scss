@@ -1,0 +1,28 @@
+// *--------- HEADER ---------*
+.app-header {
+    padding: 30px;
+    background-color: #fdf2f2;
+
+    .statistic{
+        margin-left: 15px;
+        display: flex;
+        flex-direction: row;
+
+        span{
+            display: flex;
+            flex-direction: row;
+            font-size: 16px;
+            font-weight: 600;
+            background:#fee7e7;
+            margin-right: 15px;
+            padding: 10px;
+            border-radius: 10px;
+
+            p{
+                font-weight: 300; 
+                margin: 0px 10px 0px 2px; 
+            }
+        }
+    }
+}
+  
